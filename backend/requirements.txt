@@ -1,0 +1,20 @@
+# Core
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+pydantic==2.7.1
+
+# LangChain RAG Stack
+langchain==0.2.5
+langchain-community==0.2.5
+faiss-cpu==1.14.2
+
+# Embeddings (free, runs locally)
+sentence-transformers==3.0.0
+
+# Free local LLM (no API key needed)
+transformers==4.41.2
+torch==2.12.0
+
+# Frontend
+streamlit==1.35.0
+requests==2.32.2
