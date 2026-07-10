@@ -2,7 +2,9 @@
 
 **An end-to-end Generative AI Agent for product Q&A in a retail context.**
 
-Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS vector search · HuggingFace LLMs · MLOps-ready structure (Docker + GitHub Actions CI)
+[![CI Pipeline](https://github.com/gauravbhatia-bit/rag-retail-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/gauravbhatia-bit/rag-retail-agent/actions/workflows/ci.yml)
+
+Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS vector search · HuggingFace LLMs · MLOps-ready structure (Docker + GitHub Actions CI/CD)
 
 ---
 
@@ -103,6 +105,31 @@ docker run -p 8000:8000 rag-retail-agent
 
 ---
 
+## ⚙️ CI/CD Pipeline
+
+This project uses **GitHub Actions** for automated testing and linting on every push and pull request to `main`.
+
+**Pipeline: `.github/workflows/ci.yml`**
+
+| Job | Tool | What it does |
+|-----|------|--------------|
+| `test` | pytest + httpx | Runs the full test suite in `tests/` against the FastAPI backend |
+| `lint` | ruff | Checks code style and quality across `backend/` and `frontend/` |
+
+Both jobs run on `ubuntu-latest` with Python 3.11. The CI badge at the top of this README reflects the current pipeline status.
+
+To run checks locally before pushing:
+```bash
+# Run tests
+pytest tests/ -v
+
+# Run linter
+pip install ruff
+ruff check backend/ frontend/
+```
+
+---
+
 ## 🧪 Tests
 
 ```bash
@@ -122,7 +149,7 @@ pytest tests/ -v
 | API Backend | FastAPI + Uvicorn |
 | Frontend | Streamlit |
 | Containerization | Docker |
-| CI/CD | GitHub Actions |
+| CI/CD | GitHub Actions (pytest + ruff) |
 
 ---
 
@@ -131,4 +158,4 @@ pytest tests/ -v
 - Built end-to-end RAG pipeline: data ingestion → embedding → FAISS indexing → LLM generation
 - Developed Python microservice with FastAPI serving the agent as a REST API
 - Deployed free-tier stack: HuggingFace models (no API cost), FAISS (in-memory), Leapcell/Render
-- MLOps-ready: Dockerfile for containerization, GitHub Actions CI for automated testing
+- MLOps-ready: Dockerfile for containerization, GitHub Actions CI/CD with automated pytest + ruff linting
