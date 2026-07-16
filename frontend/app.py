@@ -6,9 +6,10 @@ Connects to FastAPI backend to demonstrate the RAG pipeline
 import streamlit as st
 import requests
 import json
+import os
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = os.getenv("BACKEND_URL","http://localhost:8000")
 
 st.set_page_config(
     page_title="🛍️ RetailBot — AI Product Assistant",
