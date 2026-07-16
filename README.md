@@ -1,3 +1,4 @@
+
 # 🛍️ RAG Retail Agent
 
 ![CI](https://github.com/gauravbhatia-bit/rag-retail-agent/actions/workflows/ci.yml/badge.svg)
@@ -9,37 +10,36 @@ Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS ve
 ---
 
 ## 🏗️ Architecture
-
-```
 User Question
-      │
-      ▼
+│
+▼
 ┌─────────────────────────────────┐
-│   Streamlit Frontend (UI)       │  ← frontend/app.py
-│   http://localhost:8501         │
+│ Streamlit Frontend (UI) │ ← frontend/app.py
+│ http://localhost:8501 │
 └──────────────┬──────────────────┘
-               │ HTTP POST /ask
-               ▼
+│ HTTP POST /ask
+▼
 ┌─────────────────────────────────┐
-│   FastAPI Microservice          │  ← backend/main.py
-│   http://localhost:8000         │
-│                                 │
-│  ┌──────────────────────────┐  │
-│  │  LangChain RAG Chain     │  │
-│  │  ┌────────────────────┐  │  │
-│  │  │ FAISS Vector Store │  │  │  ← HuggingFace MiniLM embeddings
-│  │  └────────┬───────────┘  │  │
-│  │           │ top-k chunks  │  │
-│  │  ┌────────▼───────────┐  │  │
-│  │  │  flan-t5-base LLM  │  │  │  ← Free, runs locally (no API key)
-│  │  └────────────────────┘  │  │
-│  └──────────────────────────┘  │
+│ FastAPI Microservice │ ← backend/main.py
+│ http://localhost:8000 │
+│ │
+│ ┌──────────────────────────┐ │
+│ │ LangChain RAG Chain │ │
+│ │ ┌────────────────────┐ │ │
+│ │ │ FAISS Vector Store │ │ │ ← HuggingFace MiniLM embeddings
+│ │ └────────┬───────────┘ │ │
+│ │ │ top-k chunks │ │
+│ │ ┌────────▼───────────┐ │ │
+│ │ │ flan-t5-base LLM │ │ │ ← Free, runs locally (no API key)
+│ │ └────────────────────┘ │ │
+│ └──────────────────────────┘ │
 └─────────────────────────────────┘
-               │
-               ▼
-         JSON Response
-    { answer, sources, latency_ms }
-```
+│
+▼
+JSON Response
+{ answer, sources, latency_ms }
+
+text
 
 ---
 
