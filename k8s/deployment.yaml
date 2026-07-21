@@ -1,1 +1,19 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-retail-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-retail-agent
+  template:
+    metadata:
+      labels:
+        app: rag-retail-agent
+    spec:
+      containers:
+        - name: rag-retail-agent
+          image: rag-retail-agent:local
+          ports:
+            - containerPort: 8000
