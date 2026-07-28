@@ -1,4 +1,4 @@
-﻿name: CI Pipeline
+name: CI Pipeline
 on:
   push:
     branches: [main]
@@ -34,3 +34,32 @@ jobs:
         run: docker build -t rag-backend:ci -f backend/Dockerfile .
       - name: Build frontend image
         run: docker build -t rag-frontend:ci -f frontend/Dockerfile .
+  docker-push:
+    needs: [test, lint, docker-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/rag-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/rag-backend:${{ github.sha }}
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/rag-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/rag-frontend:${{ github.sha }}
