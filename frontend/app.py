@@ -3,10 +3,10 @@ RAG Retail Agent - Streamlit Frontend
 Connects to FastAPI backend to demonstrate the RAG pipeline
 """
 
-import streamlit as st
-import requests
-import json
 import os
+
+import requests
+import streamlit as st
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 BACKEND_URL = os.getenv("BACKEND_URL","http://localhost:8000")

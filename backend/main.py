@@ -3,20 +3,22 @@ RAG Retail Agent - FastAPI Backend (Microservice)
 Uses: LangChain + HuggingFace Embeddings + FAISS + local LLM (no OpenAI cost)
 """
 
+import json
+import time
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import json, os, time
-from pathlib import Path
+from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
+from langchain.schema import Document
 
 # --- LangChain & Vector DB ---
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.schema import Document
 from langchain_community.llms import HuggingFacePipeline
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain_community.vectorstores import FAISS
+from pydantic import BaseModel
 from transformers import pipeline as hf_pipeline
 
 # ── App Setup ──────────────────────────────────────────────────────────────────
@@ -161,10 +163,10 @@ def ask_question(request: QueryRequest):
     latency = (time.time() - start) * 1000
 
     # Extract source product names from retrieved docs
-    sources = list(set([
+    sources = list({
         doc.metadata.get("name", "Unknown")
         for doc in result.get("source_documents", [])
-    ]))
+    })
 
     return QueryResponse(
         answer=result["result"].strip(),
