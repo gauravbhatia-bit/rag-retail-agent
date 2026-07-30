@@ -5,7 +5,7 @@
 
 **An end-to-end Generative AI Agent for product Q&A in a retail context.**
 
-Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS vector search · HuggingFace LLMs · MLOps-ready structure (Docker Compose + GitHub Actions CI)
+Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS vector search · HuggingFace LLMs · full CI/CD pipeline (GitHub Actions → Docker Hub → Kubernetes)
 
 ---
 
@@ -111,11 +111,30 @@ docker-compose up --build
 
 ---
 
-## ⚠️ Deployment Notes
+## 🔄 CI/CD Pipeline
 
-- Deployed to **Render** using platform-driven CD (auto-deploy on push to `main`).
-- The current RAG stack (HuggingFace `flan-t5-base` + Torch) exceeds Render's free-tier RAM limit, so the live backend may crash or stay offline on the free plan.
-- This limitation is documented intentionally — the CI/CD pipeline, Docker containerization, and deployment config are fully functional and demonstrate the end-to-end DevOps workflow, even though the live free-tier instance is memory-constrained.
+This repo has a fully automated CI/CD pipeline via GitHub Actions (`.github/workflows/ci.yml`):
+
+**Continuous Integration** (runs on every push/PR to `main`):
+- `test` — runs the `pytest` suite
+- `lint` — runs `ruff` against `backend/` and `frontend/`
+- `docker-build` — validates that both Dockerfiles build cleanly
+
+**Continuous Delivery** (runs on every push to `main`, after CI passes):
+- `docker-push` — builds and pushes both images to Docker Hub, tagged with both `:latest` and the commit SHA (`:<git-sha>`), so any previous build can be pinned/rolled back to by tag
+
+**Kubernetes manifests** (`k8s/`):
+- Separate `Deployment` + `Service` for backend and frontend, pointing at the Docker Hub images
+- Includes `readinessProbe`/`livenessProbe` health checks and CPU/memory `requests`/`limits`
+- Deployed and tested manually via `kubectl apply` against local (Minikube) and sandboxed (Killercoda) clusters
+
+---
+
+## ⚠️ Deployment & Resource Notes
+
+- **Render**: platform-driven CD (auto-deploy on push to `main`). The RAG stack (HuggingFace `flan-t5-base` + Torch) exceeds Render's free-tier RAM, so the live instance may crash or stay offline on the free plan.
+- **Kubernetes**: the same memory footprint (confirmed locally, and again on free K8s sandboxes with ~3.7GB allocatable nodes) causes the backend pod to be evicted or fail to pull/extract cleanly on small/free-tier nodes. The manifests are correct and would run cleanly on a node with adequate resources (~3-4GB allocatable for the backend pod alone).
+- This is documented intentionally, not hidden: the CI pipeline, CD to Docker Hub, and K8s deployment configuration are all fully functional and demonstrate the complete DevOps workflow end-to-end. The one constraint — running a multi-GB ML model on free-tier infrastructure — is a real, common MLOps problem (usually solved with dedicated/paid nodes or a smaller distilled model), not a gap in the pipeline itself.
 
 ---
 
@@ -138,7 +157,9 @@ pytest tests/ -v
 | API Backend | FastAPI + Uvicorn |
 | Frontend | Streamlit |
 | Containerization | Docker Compose (backend + frontend) |
-| CI/CD | GitHub Actions (pytest + ruff) |
+| Container Registry | Docker Hub (auto-published via CI/CD) |
+| Orchestration | Kubernetes (Deployments, Services, health probes) |
+| CI/CD | GitHub Actions (pytest + ruff + Docker build/push pipeline) |
 
 ---
 
@@ -146,6 +167,6 @@ pytest tests/ -v
 
 - Built end-to-end RAG pipeline: data ingestion → embedding → FAISS indexing → LLM generation
 - Developed Python microservice with FastAPI serving the agent as a REST API
-- Containerized with Docker Compose (multi-service: backend + frontend) and set up platform-driven CD to Render
-- Diagnosed and documented a real production constraint (free-tier RAM limits) rather than concealing it
-- MLOps-ready: GitHub Actions CI running automated pytest + ruff checks on every push
+- Designed and implemented a full CI/CD pipeline in GitHub Actions: automated testing, linting, Docker image build validation, and automatic image publishing to Docker Hub (SHA + latest tagging strategy) on every merge to `main`
+- Wrote production-style Kubernetes manifests (Deployments, Services, readiness/liveness probes, resource requests/limits) for a multi-service application
+- Diagnosed and documented real infrastructure constraints (RAM limits on Render's free tier, disk/memory limits on Kubernetes free-tier sandboxes) rather than concealing them — a realistic MLOps trade-off
