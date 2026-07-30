@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-frontend
+  template:
+    metadata:
+      labels:
+        app: rag-frontend
+    spec:
+      containers:
+        - name: rag-frontend
+          image: garryftbl/rag-frontend:latest
+          ports:
+            - containerPort: 8501
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
