@@ -40,7 +40,7 @@ User Question
 JSON Response
 { answer, sources, latency_ms }
 
-text
+
 ```
 ---
 
