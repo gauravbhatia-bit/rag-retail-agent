@@ -8,6 +8,7 @@
 Built to demonstrate: LangChain RAG pipeline · FastAPI microservice · FAISS vector search · HuggingFace LLMs · full CI/CD pipeline (GitHub Actions → Docker Hub → Kubernetes)
 
 ---
+```
 
 ## 🏗️ Architecture
 User Question
@@ -40,7 +41,7 @@ JSON Response
 { answer, sources, latency_ms }
 
 text
-
+```
 ---
 
 ## 🚀 Quick Start
